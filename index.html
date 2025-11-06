@@ -203,6 +203,7 @@
             <button class="tab-btn active" onclick="showTab('wniosek')"><i class="fas fa-file-signature"></i> Wniosek</button>
             <button class="tab-btn" onclick="showTab('wyrok')"><i class="fas fa-gavel"></i> Wyrok</button>
             <button class="tab-btn" onclick="showTab('ulaskawienie')"><i class="fas fa-hand-holding-heart"></i> Ułaskawienie</button>
+            <button class="tab-btn" onclick="showTab('niekaralnosc')"><i class="fas fa-user-shield"></i> Niekaralność</button>
             <button class="tab-btn" onclick="showTab('raport')"><i class="fas fa-clipboard"></i> Raport</button>
             <button class="tab-btn" onclick="showTab('dowody')"><i class="fas fa-folder-open"></i> Dowody</button>
             <button class="tab-btn" onclick="showTab('kalendarz')"><i class="fas fa-calendar-alt"></i> Kalendarz</button>
@@ -284,7 +285,33 @@
             <div id="statusUlaskawienie" class="status"></div>
         </div>
 
-        <!-- 4. Raport z rozprawy -->
+        <!-- 4. Zaświadczenie o niekaralności -->
+        <div id="niekaralnosc" class="tab">
+            <form id="niekaralnoscForm">
+                <label>Imię i nazwisko osoby:</label>
+                <input type="text" id="osobaNiekaralnosc" required placeholder="np. Jan Kowalski">
+
+                <label>PESEL lub ID RP:</label>
+                <input type="text" id="idNiekaralnosc" required placeholder="np. 12345678901 lub CID1234">
+
+                <label>Sędzia wydający zaświadczenie:</label>
+                <input type="text" id="sedziaNiekaralnosc" required placeholder="np. Sędzia Mateusz Królikowski">
+
+                <label>Data wydania:</label>
+                <input type="date" id="dataNiekaralnosc" required />
+
+                <label>Treść zaświadczenia:</label>
+                <textarea id="trescNiekaralnosc" required> Sąd Okręgowy w Gdańsku po sprawdzeniu rejestru karnego stwierdza, że wskazana osoba jest osobą niekaraną.</textarea>
+
+                <label>Uwagi (opcjonalne):</label>
+                <textarea id="uwagiNiekaralnosc" placeholder="Dodatkowe informacje..."></textarea>
+
+                <button type="submit">Wystaw zaświadczenie o niekaralności</button>
+            </form>
+            <div id="statusNiekaralnosc" class="status"></div>
+        </div>
+
+        <!-- 5. Raport z rozprawy -->
         <div id="raport" class="tab">
             <form id="raportForm">
                 <label>Numer sprawy:</label>
@@ -297,14 +324,14 @@
                 <textarea id="uczestnicyRaport" required placeholder="np. Oskarżony: Jan Kowalski, Obrońca: adw. Adam Nowak, Prokurator: prok. Anna Wiśniewska"></textarea>
                 
                 <label>Przebieg rozprawy (Notatki):</label>
-                <textarea id="przebiegRaport" required placeholder="np. 14:00 - Rozpoczęcie rozprawy. 14:15 - Zeznania świadka Marka Dąbrowskiego..."></textarea>
+                <textarea id="przebiegRaport" required placeholder="np. 14:00 - Rozpoczęcie rozprawy. 14:15 - Zeznania świadka..."></textarea>
                 
                 <button type="submit">Wyślij raport z rozprawy</button>
             </form>
             <div id="statusRaport" class="status"></div>
         </div>
 
-        <!-- 5. Złożenie dowodów -->
+        <!-- 6. Złożenie dowodów -->
         <div id="dowody" class="tab">
             <form id="dowodyForm">
                 <label>Numer sprawy:</label>
@@ -314,7 +341,7 @@
                 <input type="text" id="zglaszajacyDowody" required placeholder="np. sierż. sztab. Marek Nowak" />
                 
                 <label>Opis dowodu:</label>
-                <textarea id="opisDowodu" required placeholder="np. Zapis z kamery nasobnej funkcjonariusza, zdjęcia z miejsca zdarzenia, zeznania świadka w formie pisemnej."></textarea>
+                <textarea id="opisDowodu" required placeholder="np. Zapis z kamery nasobnej funkcjonariusza, zdjęcia z miejsca zdarzenia..."></textarea>
                 
                 <label>Link do dowodu (np. imgur, YouTube, Google Drive):</label>
                 <input type="text" id="linkDowodu" placeholder="Wklej tutaj link" />
@@ -325,7 +352,7 @@
             <div id="statusDowody" class="status"></div>
         </div>
 
-        <!-- 6. Kalendarz Sądowy -->
+        <!-- 7. Kalendarz Sądowy -->
         <div id="kalendarz" class="tab">
             <form id="kalendarzForm">
                 <label>Numer sprawy:</label>
@@ -345,7 +372,7 @@
             <div id="statusKalendarz" class="status"></div>
         </div>
 
-        <!-- 7. Rejestr Spraw -->
+        <!-- 8. Rejestr Spraw -->
         <div id="rejestr" class="tab">
             <h2>Rejestr Otwartych Spraw</h2>
             <p>Poniżej znajduje się lista wszystkich złożonych wniosków o wszczęcie postępowania. Dane są tymczasowo zapisane w Twojej przeglądarce, co pozwala na ich szybkie podglądanie.</p>
@@ -356,14 +383,15 @@
     </div>
     <script>
         // UWAGA: Poniżej musisz podmienić adresy URL na swoje własne webhooki!
-        // Stwórz siedem osobnych kanałów na Discordzie i siedem webhooków dla każdego z nich.
         const webhookWnioski = 'https://discord.com/api/webhooks/1412788434648694804/n60lhu1ldk_rwms5f7TCE5XE3JO8XM-TZ4zReqem8dKynqoohH5_e4HFuInINYiVDCnd'; 
         const webhookWyroki = 'https://discord.com/api/webhooks/1403681144029057074/qWog2W1UxsgQp1P_IzmI0sqjmXtC7ZD4Fw3XsGhLX39AFaW31cyTC1Y0bNh6AfeqXy8c';
         const webhookUlaskawienia = 'https://discord.com/api/webhooks/1412788603393937458/dhJlRuToV9hjVIyH91uUrVeJVa0NI_vfCHqZxMoBQ6DprTSdfwvcYhq02-jznxaPKShZ';
         const webhookRaporty = 'https://discord.com/api/webhooks/1405288179946225786/lHbPOsqW_TqXoK8Xg8mm-tzDqcQz7OENFmJZzMwKOgbW-PEqgePP0oDOfLsWLIxPNGX4';
         const webhookDowody = 'https://discord.com/api/webhooks/1412788739679191162/xPfERk9Otx7WvIUc8O-KX3WYN8roBqMinNM4QrEr9yz81YsZWVI2eNW5xOUWvsLBBpJw';
         const webhookKalendarz = 'https://discord.com/api/webhooks/1412788883456000010/JV1VXEk7Us62pT2kpP_UmEugibLN7hSIwCrpkda_8Fizt5QNuzBgLl8PbbdyIqlEI7kd';
-
+        const webhookNiekaralnosc = 'https://discord.com/api/webhooks/1436052347733282836/NNaOJAOS7Gj6o2JBPNXgUGemD0nnA6Z6P8k1dky4CyWgCi8DAkLTCk6rhgYkyfupZFqp'; // <- wpisz swój webhook
+        const webhookNiekaralnosc = 'https://discord.com/api/webhooks/1436052645050847323/UcMnnZg3T6AiZ5G0X0qjke2catC2gUlFCcuZRBOWm9ndAwceqBVbxqiNmjUE5crpQEl4'
+            
         let lastCaseNumber = localStorage.getItem('lastCaseNumber') ? parseInt(localStorage.getItem('lastCaseNumber')) : 123;
         
         // Funkcja do przełączania zakładek
@@ -371,7 +399,7 @@
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
+            event.currentTarget && event.currentTarget.classList.add('active');
 
             if (id === 'rejestr') {
                 renderCaseRegister();
@@ -423,10 +451,11 @@
                     const li = document.createElement('li');
                     li.classList.add('case-item');
                     li.innerHTML = `
-                        <strong>Numer sprawy:</strong> ${c.caseNumber}<br>
-                        <strong>Oskarżony:</strong> ${c.ukarany}<br>
-                        <strong>Zgłaszający:</strong> ${c.zglaszajacy}<br>
-                        <strong>Opis:</strong> ${c.opisSprawy}
+                        <strong>Numer sprawy:</strong> ${c.caseNumber || '—'}<br>
+                        <strong>Numer ewidencyjny:</strong> ${c.numerEwidencyjny || '—'}<br>
+                        <strong>Oskarżony / Osoba:</strong> ${c.ukarany || c.osoba || '—'}<br>
+                        <strong>Zgłaszający:</strong> ${c.zglaszajacy || c.zglaszajacyDowody || '—'}<br>
+                        <strong>Opis:</strong> ${c.opisSprawy || c.opis || '—'}
                     `;
                     list.appendChild(li);
                 });
@@ -436,8 +465,22 @@
         // Uruchomienie rejestru po załadowaniu strony
         document.addEventListener('DOMContentLoaded', () => {
             renderCaseRegister();
+            // ustaw domyślny przyszły numer sprawy w polu (wniosek)
+            const rok = new Date().getFullYear().toString().substr(-2);
+            document.getElementById('caseNumberWniosek').value = `WO/S/${rok}/${lastCaseNumber+1}`;
         });
 
+        // Generator numeru ewidencyjnego
+        function generujNumerEwidencyjny(prefix) {
+            const rok = new Date().getFullYear();
+            // sekwencyjny numer na podstawie localStorage by być mniej losowym
+            let counterKey = `counter_${prefix}_${rok}`;
+            let counter = localStorage.getItem(counterKey) ? parseInt(localStorage.getItem(counterKey)) : 0;
+            counter++;
+            localStorage.setItem(counterKey, counter);
+            const padded = String(counter).padStart(5, '0');
+            return `${prefix}-${rok}-${padded}`;
+        }
 
         // Formularz Wniosku
         document.getElementById('wniosekForm').addEventListener('submit', async e => {
@@ -446,8 +489,8 @@
 
             try {
                 lastCaseNumber++;
-                let rok = new Date().getFullYear().toString().substr(-2);
-                const caseNumber = `WO/S/${rok}/${lastCaseNumber}`;
+                let rokShort = new Date().getFullYear().toString().substr(-2);
+                const caseNumber = `WO/S/${rokShort}/${lastCaseNumber}`;
                 document.getElementById('caseNumberWniosek').value = caseNumber;
 
                 const ukarany = document.getElementById('ukaranyWniosek').value.trim();
@@ -457,19 +500,21 @@
                 const opisSprawy = document.getElementById('opisSprawyWniosek').value.trim();
                 const wnioski = document.getElementById('wnioskiWniosek').value.trim();
 
+                const numerEw = generujNumerEwidencyjny('WN'); // numer ewidencyjny dla wniosku
+
                 const embed = {
                     title: ":scroll: WNIOSEK O WSZCZĘCIE POSTĘPOWANIA",
-                    description: `**Numer sprawy:** ${caseNumber}\n> Złożono do **Sądu Okręgowego w Gdańsku – Summer RP**`,
+                    description: `**Numer sprawy:** ${caseNumber}\n**Numer ewidencyjny:** ${numerEw}\n> Złożono do **Sądu Okręgowego w Gdańsku – Summer RP**`,
                     color: 0x58a6ff,
                     fields: [
                         { name: 'Oskarżony:', value: ukarany, inline: false },
                         { name: 'Zgłaszający:', value: zglaszajacy, inline: false },
-                        { name: 'Data zdarzenia:', value: dataZdarzenia, inline: true },
-                        { name: 'Miejsce zdarzenia:', value: miejsceZdarzenia, inline: true },
-                        { name: 'Opis sprawy i zarzuty', value: opisSprawy, inline: false },
-                        { name: 'Wnioski i żądania', value: wnioski, inline: false },
+                        { name: 'Data zdarzenia:', value: dataZdarzenia || 'Brak', inline: true },
+                        { name: 'Miejsce zdarzenia:', value: miejsceZdarzenia || 'Brak', inline: true },
+                        { name: 'Opis sprawy i zarzuty', value: opisSprawy || 'Brak', inline: false },
+                        { name: 'Wnioski i żądania', value: wnioski || 'Brak', inline: false },
                     ],
-                    footer: { text: "Sąd Okręgowy w Gdańsku – Sammer RP" },
+                    footer: { text: "Sąd Okręgowy w Gdańsku – Summer RP" },
                     timestamp: new Date().toISOString(),
                 };
 
@@ -478,6 +523,7 @@
                 // Zapisz sprawę w lokalnym rejestrze
                 saveCaseToRegister({
                     caseNumber: caseNumber,
+                    numerEwidencyjny: numerEw,
                     ukarany: ukarany,
                     zglaszajacy: zglaszajacy,
                     opisSprawy: opisSprawy
@@ -487,8 +533,8 @@
 
                 setStatus('statusWniosek', 'Wniosek został pomyślnie wysłany! Numer sprawy: ' + caseNumber, true);
                 e.target.reset();
-                rok = new Date().getFullYear().toString().substr(-2);
-                document.getElementById('caseNumberWniosek').value = `WO/S/${rok}/${lastCaseNumber+1}`;
+                const rokNew = new Date().getFullYear().toString().substr(-2);
+                document.getElementById('caseNumberWniosek').value = `WO/S/${rokNew}/${lastCaseNumber+1}`;
 
 
             } catch(err) {
@@ -497,7 +543,7 @@
         });
 
         // Formularz Wyroku
-        document.getElementById('wyrokForm').addEventListener('submit', async e => {
+        document.getElementById('wyrokForm') && document.getElementById('wyrokForm').addEventListener('submit', async e => {
             e.preventDefault();
             setStatus('statusWyrok', 'Wysyłam wyrok...', null);
 
@@ -510,24 +556,26 @@
                 const wymiarKary = document.getElementById('wymiarKary').value.trim() || 'Uniewinniono';
                 const uzasadnienie = document.getElementById('uzasadnienieWyrok').value.trim();
 
+                const numerEw = generujNumerEwidencyjny('WY'); // ewidencyjny dla wyroku
+
                 const embed = {
                     title: ":hammer: WYROK SĄDOWY",
-                    description: `**Numer sprawy:** ${caseNumber}\n> Wydano w **Sądzie Okręgowym w Gdańsku – Summer RP**`,
+                    description: `**Numer sprawy:** ${caseNumber}\n**Numer ewidencyjny:** ${numerEw}\n> Wydano w **Sądzie Okręgowym w Gdańsku – Summer RP**`,
                     color: 0x38a169,
                     fields: [
                         { name: 'Oskarżony:', value: ukarany, inline: false },
                         { name: 'Sędzia:', value: sedzia, inline: false },
-                        { name: 'Data wydania:', value: dataWyroku, inline: false },
-                        { name: 'Werdykt', value: trescWyroku, inline: false },
-                        { name: 'Wymiar kary', value: wymiarKary, inline: false },
-                        { name: 'Uzasadnienie', value: uzasadnienie, inline: false },
+                        { name: 'Data wydania:', value: dataWyroku || 'Brak', inline: false },
+                        { name: 'Werdykt', value: trescWyroku || 'Brak', inline: false },
+                        { name: 'Wymiar kary', value: wymiarKary || 'Brak', inline: false },
+                        { name: 'Uzasadnienie', value: uzasadnienie || 'Brak', inline: false },
                     ],
                     footer: { text: "Sąd Okręgowy w Olsztynie – Gdańsku RP" },
                     timestamp: new Date().toISOString(),
                 };
 
                 await wyslijWebhook(webhookWyroki, embed);
-                setStatus('statusWyrok', 'Wyrok został pomyślnie wysłany!', true);
+                setStatus('statusWyrok', 'Wyrok został pomyślnie wysłany! Numer ewidencyjny: ' + numerEw, true);
                 e.target.reset();
 
             } catch(err) {
@@ -545,21 +593,23 @@
                 const caseNumber = document.getElementById('caseNumberUlaskawienie').value.trim();
                 const uzasadnienie = document.getElementById('uzasadnienieUlaskawienie').value.trim();
 
+                const numerEw = generujNumerEwidencyjny('UL'); // ewidencyjny dla ułaskawienia
+
                 const embed = {
                     title: ":scroll: WNIOSEK O UŁASKAWIENIE",
-                    description: `> Złożono do **Sądu Okręgowego w Gdańsku – Summer RP**`,
+                    description: `**Numer ewidencyjny:** ${numerEw}\n> Złożono do **Sądu Okręgowego w Gdańsku – Summer RP**`,
                     color: 0xffa500,
                     fields: [
                         { name: 'Skazany:', value: skazany, inline: false },
                         { name: 'Numer sprawy:', value: caseNumber, inline: false },
-                        { name: 'Uzasadnienie wniosku', value: uzasadnienie, inline: false },
+                        { name: 'Uzasadnienie wniosku', value: uzasadnienie || 'Brak', inline: false },
                     ],
                     footer: { text: "Sąd Okręgowy w Gdańsku – Summer RP" },
                     timestamp: new Date().toISOString(),
                 };
 
                 await wyslijWebhook(webhookUlaskawienia, embed);
-                setStatus('statusUlaskawienie', 'Wniosek o ułaskawienie został pomyślnie wysłany.', true);
+                setStatus('statusUlaskawienie', 'Wniosek o ułaskawienie został pomyślnie wysłany. Numer ewidencyjny: ' + numerEw, true);
                 e.target.reset();
 
             } catch(err) {
@@ -578,21 +628,23 @@
                 const uczestnicy = document.getElementById('uczestnicyRaport').value.trim();
                 const przebieg = document.getElementById('przebiegRaport').value.trim();
 
+                const numerEw = generujNumerEwidencyjny('RP'); // ewidencyjny dla raportu
+
                 const embed = {
                     title: ":clipboard: RAPORT Z ROZPRAWY",
-                    description: `**Sąd Okręgowy w Gdańsku – Summer RP**\n\n**Numer sprawy:** ${caseNumber}`,
+                    description: `**Numer sprawy:** ${caseNumber}\n**Numer ewidencyjny:** ${numerEw}\n\n**Sąd Okręgowy w Gdańsku – Summer RP**`,
                     color: 0x8b949e,
                     fields: [
-                        { name: 'Sędzia:', value: sedzia, inline: false },
-                        { name: 'Uczestnicy', value: uczestnicy, inline: false },
-                        { name: 'Przebieg rozprawy', value: przebieg, inline: false },
+                        { name: 'Sędzia:', value: sedzia || 'Brak', inline: false },
+                        { name: 'Uczestnicy', value: uczestnicy || 'Brak', inline: false },
+                        { name: 'Przebieg rozprawy', value: przebieg || 'Brak', inline: false },
                     ],
                     footer: { text: "Sąd Okręgowy w Gdańsku – Summer RP" },
                     timestamp: new Date().toISOString(),
                 };
 
                 await wyslijWebhook(webhookRaporty, embed);
-                setStatus('statusRaport', 'Raport został pomyślnie wysłany.', true);
+                setStatus('statusRaport', 'Raport został pomyślnie wysłany. Numer ewidencyjny: ' + numerEw, true);
                 e.target.reset();
 
             } catch(err) {
@@ -620,14 +672,16 @@
                     linkField = "Brak linków.";
                 }
 
+                const numerEw = generujNumerEwidencyjny('DW'); // ewidencyjny dla dowodów
+
                 const embed = {
                     title: ":page_with_curl: ZŁOŻENIE DOWODÓW",
-                    description: `> Złożono do **Sądu Okręgowego w Gdańsku – Summer RP**`,
+                    description: `**Numer ewidencyjny:** ${numerEw}\n> Złożono do **Sądu Okręgowego w Gdańsku – Summer RP**`,
                     color: 0x059669,
                     fields: [
-                        { name: 'Numer sprawy:', value: caseNumber, inline: false },
-                        { name: 'Zgłaszający', value: zglaszajacy, inline: false },
-                        { name: 'Opis dowodu', value: opis, inline: false },
+                        { name: 'Numer sprawy:', value: caseNumber || 'Brak', inline: false },
+                        { name: 'Zgłaszający', value: zglaszajacy || 'Brak', inline: false },
+                        { name: 'Opis dowodu', value: opis || 'Brak', inline: false },
                         { name: 'Link(i) do dowodów', value: linkField, inline: false },
                     ],
                     footer: { text: "Sąd Okręgowy w Gdańsku – Summer RP" },
@@ -635,7 +689,7 @@
                 };
 
                 await wyslijWebhook(webhookDowody, embed);
-                setStatus('statusDowody', 'Dowód został pomyślnie złożony.', true);
+                setStatus('statusDowody', 'Dowód został pomyślnie złożony. Numer ewidencyjny: ' + numerEw, true);
                 e.target.reset();
 
             } catch(err) {
@@ -662,26 +716,77 @@
                     minute: '2-digit'
                 });
 
+                const numerEw = generujNumerEwidencyjny('KL'); // ewidencyjny dla kalendarza
+
                 const embed = {
                     title: ":calendar: PLANOWANA ROZPRAWA",
-                    description: `> Zaplanowano w **Sądzie Okręgowym w Gdańsku – Summer RP**`,
+                    description: `**Numer ewidencyjny:** ${numerEw}\n> Zaplanowano w **Sądzie Okręgowym w Gdańsku – Summer RP**`,
                     color: 0xffd700,
                     fields: [
-                        { name: 'Numer sprawy:', value: caseNumber, inline: false },
-                        { name: 'Sędzia:', value: sedzia, inline: false },
-                        { name: 'Termin:', value: terminFormatted, inline: false },
-                        { name: 'Uczestnicy:', value: uczestnicy, inline: false },
+                        { name: 'Numer sprawy:', value: caseNumber || 'Brak', inline: false },
+                        { name: 'Sędzia:', value: sedzia || 'Brak', inline: false },
+                        { name: 'Termin:', value: terminFormatted || 'Brak', inline: false },
+                        { name: 'Uczestnicy:', value: uczestnicy || 'Brak', inline: false },
                     ],
                     footer: { text: "Sąd Okręgowy w Gdańsku – Summer RP" },
                     timestamp: new Date().toISOString(),
                 };
 
                 await wyslijWebhook(webhookKalendarz, embed);
-                setStatus('statusKalendarz', 'Rozprawa została pomyślnie dodana do kalendarza.', true);
+                setStatus('statusKalendarz', 'Rozprawa została pomyślnie dodana do kalendarza. Numer ewidencyjny: ' + numerEw, true);
                 e.target.reset();
 
             } catch(err) {
                 setStatus('statusKalendarz', 'Błąd podczas wysyłania terminu: ' + err.message, false);
+            }
+        });
+
+        // Formularz Niekaralnosc (Zaświadczenie)
+        document.getElementById('niekaralnoscForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            setStatus('statusNiekaralnosc', 'Wysyłam zaświadczenie...', null);
+
+            try {
+                const osoba = document.getElementById('osobaNiekaralnosc').value.trim();
+                const id = document.getElementById('idNiekaralnosc').value.trim();
+                const sedzia = document.getElementById('sedziaNiekaralnosc').value.trim();
+                const data = document.getElementById('dataNiekaralnosc').value;
+                const tresc = document.getElementById('trescNiekaralnosc').value.trim();
+                const uwagi = document.getElementById('uwagiNiekaralnosc').value.trim();
+
+                const numerEw = generujNumerEwidencyjny('ZN'); // ZN = Zaświadczenie Niekaralności
+
+                const embed = {
+                    title: ":shield: ZAŚWIADCZENIE O NIEKARALNOŚCI",
+                    description: `**Numer ewidencyjny:** ${numerEw}\n> Złożono / Wydano w **Sądzie Okręgowym w Gdańsku – Summer RP**`,
+                    color: 0x2ecc71,
+                    fields: [
+                        { name: 'Numer ewidencyjny:', value: numerEw, inline: false },
+                        { name: 'Osoba:', value: osoba || 'Brak', inline: false },
+                        { name: 'PESEL / ID RP:', value: id || 'Brak', inline: false },
+                        { name: 'Sędzia:', value: sedzia || 'Brak', inline: false },
+                        { name: 'Data wydania:', value: data || 'Brak', inline: false },
+                        { name: 'Treść zaświadczenia:', value: tresc || 'Brak', inline: false },
+                        { name: 'Uwagi:', value: uwagi || 'Brak', inline: false },
+                    ],
+                    footer: { text: "Sąd Okręgowy w Gdańsku – Summer RP" },
+                    timestamp: new Date().toISOString(),
+                };
+
+                await wyslijWebhook(webhookNiekaralnosc, embed);
+
+                // Zapisz do rejestru lokalnego
+                saveCaseToRegister({
+                    caseNumber: null,
+                    numerEwidencyjny: numerEw,
+                    osoba: osoba,
+                    opis: tresc
+                });
+
+                setStatus('statusNiekaralnosc', 'Zaświadczenie o niekaralności zostało wysłane. Numer ewidencyjny: ' + numerEw, true);
+                e.target.reset();
+            } catch(err) {
+                setStatus('statusNiekaralnosc', 'Błąd podczas wysyłania zaświadczenia: ' + err.message, false);
             }
         });
     </script>

@@ -4,8 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sąd Okręgowy | Summer RP</title>
-    <!-- Nowa linijka z logo na karcie strony -->
-    <link rel="icon" href="https://i.imgur.com/your_logo_url.png" type="image/x-icon">
+    <link rel="icon" href="https://media.discordapp.net/attachments/1396419876989435904/1438246721267437650/sadga.png?ex=69162f23&is=6914dda3&hm=88b1776c0883a752119998d19d35dc3badd2a3020734adda20d04805e66075be&=&format=webp&quality=lossless&width=640&height=640">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
@@ -303,6 +302,12 @@
                 <label>Urzędnik sądowy:</label>
                 <input type="text" id="urzednikNiekaralnosc" required placeholder="np. Sekretarz Sądowy Anna Nowak">
 
+                <label>Status zaświadczenia:</label>
+                <select id="statusNiekaralnoscSelect">
+                    <option value="Wystawiono">✅ Wystawiono</option>
+                    <option value="Odrzucono">❌ Odrzucono</option>
+                </select>
+
                 <button type="submit">Wystaw zaświadczenie o niekaralności</button>
             </form>
             <div id="statusNiekaralnosc" class="status"></div>
@@ -386,7 +391,6 @@
         const webhookRaporty = 'https://discord.com/api/webhooks/1405288179946225786/lHbPOsqW_TqXoK8Xg8mm-tzDqcQz7OENFmJZzMwKOgbW-PEqgePP0oDOfLsWLIxPNGX4';
         const webhookDowody = 'https://discord.com/api/webhooks/1412788739679191162/xPfERk9Otx7WvIUc8O-KX3WYN8roBqMinNM4QrEr9yz81YsZWVI2eNW5xOUWvsLBBpJw';
         const webhookKalendarz = 'https://discord.com/api/webhooks/1412788883456000010/JV1VXEk7Us62pT2kpP_UmEugibLN7hSIwCrpkda_8Fizt5QNuzBgLl8PbbdyIqlEI7kd';
-        // Dwa webhooki dla niekaralności (ta sama wiadomość trafi do obu)
         const webhookNiekaralnosc1 = 'https://discord.com/api/webhooks/1436052645050847323/UcMnnZg3T6AiZ5G0X0qjke2catC2gUlFCcuZRBOWm9ndAwceqBVbxqiNmjUE5crpQEl4';
         const webhookNiekaralnosc2 = 'https://discord.com/api/webhooks/1436092452867149956/NChLgqn7b379Hf7WBDd0mJX_-WtpsnouApwDdSeGB39PfEjbZ109UQ0QGiExbg3pnoHd';
 
@@ -729,7 +733,7 @@
             }
         });
 
-        // Niekaralnosc (Zaświadczenie) - teraz wysyła na 2 webhooki
+        // Niekaralnosc (Zaświadczenie)
         document.getElementById('niekaralnoscForm').addEventListener('submit', async e => {
             e.preventDefault();
             setStatus('statusNiekaralnosc', 'Wysyłam zaświadczenie...', null);
@@ -742,44 +746,48 @@
                 const pesel = document.getElementById('peselNiekaralnosc').value.trim();
                 const cel = document.getElementById('celNiekaralnosc').value.trim();
                 const urzednik = document.getElementById('urzednikNiekaralnosc').value.trim();
+                const statusSelect = document.getElementById('statusNiekaralnoscSelect').value;
 
                 const embed = {
-                    title: ":white_check_mark: ZAŚWIADCZENIE O NIEKARALNOŚCI",
-                    description: `**Numer ewidencyjny:** ${certNumber}\n> Wydano w **Sądzie Okręgowym w Gdańsku – Summer RP**`,
-                    color: 0x2ecc71,
-                    fields: [
+                    title: statusSelect === 'Wystawiono' ? ":white_check_mark: ZAŚWIADCZENIE O NIEKARALNOŚCI" : ":x: WNIOSEK O NIEKARALNOŚCI ODRZUCONY",
+                    description: `**Numer ewidencyjny:** ${certNumber}\n> Sąd Okręgowy w Gdańsku – Summer RP`,
+                    color: statusSelect === 'Wystawiono' ? 0x2ecc71 : 0xe74c3c,
+                    fields: statusSelect === 'Wystawiono' ? [
                         { name: 'Osoba', value: imie || 'Brak', inline: false },
                         { name: 'PESEL / ID', value: pesel || 'Brak', inline: false },
                         { name: 'Cel wydania', value: cel || 'Brak', inline: false },
                         { name: 'Urzędnik sądowy', value: urzednik || 'Brak', inline: false },
                         { name: 'Status', value: '✅ Obywatel nie figuruje w rejestrze karnym', inline: false }
+                    ] : [
+                        { name: 'Osoba', value: imie || 'Brak', inline: false },
+                        { name: 'PESEL / ID', value: pesel || 'Brak', inline: false },
+                        { name: 'Cel wniosku', value: cel || 'Brak', inline: false },
+                        { name: 'Urzędnik sądowy', value: urzednik || 'Brak', inline: false },
+                        { name: 'Status', value: '❌ Wniosek o zaświadczenie o niekaralności został odrzucony', inline: false }
                     ],
                     footer: { text: "Sąd Okręgowy w Gdańsku – Summer RP" },
                     timestamp: new Date().toISOString(),
                 };
-
-                // Wyślij jednocześnie na oba webhooki
                 const sendPromises = [
                     wyslijWebhook(webhookNiekaralnosc1, embed),
                     wyslijWebhook(webhookNiekaralnosc2, embed)
                 ];
 
-                // Poczekaj na obie odpowiedzi (jeśli jeden z webhooków zwróci błąd, Promise.all się odrzuci)
                 await Promise.all(sendPromises);
 
-                // Zapisz do rejestru lokalnego
+                // Zapis do rejestru lokalnego
                 saveCaseToRegister({
                     caseNumber: null,
                     numerEwidencyjny: certNumber,
                     osoba: imie,
-                    opis: `Zaświadczenie: ${cel}`
+                    opis: statusSelect === 'Wystawiono' ? `Zaświadczenie: ${cel}` : 'Wniosek odrzucony'
                 });
 
-                setStatus('statusNiekaralnosc', 'Zaświadczenie o niekaralności zostało wysłane na oba webhooki. Numer ewidencyjny: ' + certNumber, true);
+                setStatus('statusNiekaralnosc', statusSelect === 'Wystawiono' ? 'Zaświadczenie o niekaralności zostało wysłane na oba webhooki. Numer ewidencyjny: ' + certNumber : 'Wniosek został odrzucony i wysłany na oba webhooki. Numer ewidencyjny: ' + certNumber, true);
                 e.target.reset();
             } catch(err) {
-                // jeśli któryś z webhooków padnie, pokaż szczegół błędu
-                setStatus('statusNiekaralnosc', 'Błąd podczas wysyłania zaświadczenia: ' + err.message, false);
+                // Możliwiość błędu
+                setStatus('statusNiekaralnosc', 'Błąd podczas wysyłania zaświadczenia: ' + (err.message || err), false);
             }
         });
     </script>

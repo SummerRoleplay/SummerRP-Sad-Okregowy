@@ -368,6 +368,9 @@
                 
                 <label>Uczestnicy rozprawy:</label>
                 <textarea id="uczestnicyKalendarz" required placeholder="np. Oskarżony: Jan Kowalski, Obrońca: adw. Adam Nowak"></textarea>
+
+                <label>Ping oskarżonego (Discord ID lub mention):</label>
+                <input type="text" id="pingOskarzonego" placeholder="np. 123456789012345678 albo <@123...> albo @Nick" />
                 
                 <button type="submit">Dodaj rozprawę do kalendarza</button>
             </form>
@@ -416,15 +419,18 @@
             }
         }
 
-        async function wyslijWebhook(url, embed) {
-            const body = JSON.stringify({ embeds: [embed] });
+        async function wyslijWebhook(url, embed, content = null) {
+            const payload = { embeds: [embed] };
+            if (content && content.trim().length > 0) payload.content = content;
+
+            const body = JSON.stringify(payload);
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: body
+                body
             });
             if(!response.ok) {
-                const txt = await response.text().catch(()=>'');
+                const txt = await response.text().catch(()=> '');
                 throw new Error(`Błąd sieci: ${response.status} ${response.statusText} ${txt}`);
             }
         }
@@ -699,6 +705,16 @@
                 const sedzia = document.getElementById('sedziaKalendarz').value.trim();
                 const termin = document.getElementById('terminRozprawy').value;
                 const uczestnicy = document.getElementById('uczestnicyKalendarz').value.trim();
+
+                const pingRaw = document.getElementById('pingOskarzonego').value.trim();
+                let mention = '';
+                if (/^\d{17,20}$/.test(pingRaw)) {
+                    mention = `<@${pingRaw}>`;
+                } else {
+                    mention = pingRaw;
+                }
+                const contentPing = mention ? `🔔 ${mention} — masz zaplanowaną rozprawę.` : null;
+
                 const terminFormatted = new Date(termin).toLocaleString('pl-PL', {
                     weekday: 'long',
                     year: 'numeric',
@@ -724,7 +740,8 @@
                     timestamp: new Date().toISOString(),
                 };
 
-                await wyslijWebhook(webhookKalendarz, embed);
+                await wyslijWebhook(webhookKalendarz, embed, contentPing);
+
                 setStatus('statusKalendarz', 'Rozprawa została pomyślnie dodana do kalendarza. Numer ewidencyjny: ' + numerEw, true);
                 e.target.reset();
 
@@ -739,7 +756,7 @@
             setStatus('statusNiekaralnosc', 'Wysyłam zaświadczenie...', null);
 
             try {
-                const certNumber = generujNumerEwidencyjny('ZN'); // ZN = Zaświadczenie Niekaralności
+                const certNumber = generujNumerEwidencyjny('ZN');
                 document.getElementById('caseNumberNiekaralnosc').value = certNumber;
 
                 const imie = document.getElementById('imieNiekaralnosc').value.trim();
@@ -768,6 +785,7 @@
                     footer: { text: "Sąd Okręgowy w Gdańsku – Summer RP" },
                     timestamp: new Date().toISOString(),
                 };
+
                 const sendPromises = [
                     wyslijWebhook(webhookNiekaralnosc1, embed),
                     wyslijWebhook(webhookNiekaralnosc2, embed)
@@ -783,10 +801,12 @@
                     opis: statusSelect === 'Wystawiono' ? `Zaświadczenie: ${cel}` : 'Wniosek odrzucony'
                 });
 
-                setStatus('statusNiekaralnosc', statusSelect === 'Wystawiono' ? 'Zaświadczenie o niekaralności zostało wysłane na oba webhooki. Numer ewidencyjny: ' + certNumber : 'Wniosek został odrzucony i wysłany na oba webhooki. Numer ewidencyjny: ' + certNumber, true);
+                setStatus('statusNiekaralnosc', statusSelect === 'Wystawiono'
+                    ? 'Zaświadczenie o niekaralności zostało wysłane na oba webhooki. Numer ewidencyjny: ' + certNumber
+                    : 'Wniosek został odrzucony i wysłany na oba webhooki. Numer ewidencyjny: ' + certNumber, true);
+
                 e.target.reset();
             } catch(err) {
-                // Możliwiość błędu
                 setStatus('statusNiekaralnosc', 'Błąd podczas wysyłania zaświadczenia: ' + (err.message || err), false);
             }
         });

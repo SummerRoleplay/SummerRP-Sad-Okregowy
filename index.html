@@ -242,7 +242,7 @@
         <div id="wyrok" class="tab">
             <form id="wyrokForm">
                 <label>Numer sprawy:</label>
-                <input type="text" id="caseNumberWyrok" required placeholder="np. WO/S/2025/123" />
+                <input type="text" id="caseNumberWyrok" required placeholder="np. SG/O/2025/123" />
 
                 <label>Imię i nazwisko osoby oskarżonej:</label>
                 <input type="text" id="ukaranyWyrok" required placeholder="np. Jan Kowalski" />
@@ -274,7 +274,7 @@
                 <input type="text" id="skazanyUlaskawienie" required placeholder="np. Jan Kowalski" />
                 
                 <label>Numer sprawy (dotyczącej wyroku):</label>
-                <input type="text" id="caseNumberUlaskawienie" required placeholder="np. WO/S/2025/123" />
+                <input type="text" id="caseNumberUlaskawienie" required placeholder="np. SG/O/2025/123" />
                 
                 <label>Uzasadnienie wniosku o ułaskawienie:</label>
                 <textarea id="uzasadnienieUlaskawienie" required placeholder="Opisz powody, dla których ułaskawienie jest uzasadnione (np. wzorowe zachowanie, nowe okoliczności sprawy)."></textarea>
@@ -317,7 +317,7 @@
         <div id="raport" class="tab">
             <form id="raportForm">
                 <label>Numer sprawy:</label>
-                <input type="text" id="caseNumberRaport" required placeholder="np. WO/S/2025/123" />
+                <input type="text" id="caseNumberRaport" required placeholder="np. SG/O/2025/123" />
                 
                 <label>Sędzia prowadzący rozprawę:</label>
                 <input type="text" id="sedziaRaport" required placeholder="np. Sędzia Mateusz Królikowski" />
@@ -337,7 +337,7 @@
         <div id="dowody" class="tab">
             <form id="dowodyForm">
                 <label>Numer sprawy:</label>
-                <input type="text" id="caseNumberDowody" required placeholder="np. WO/S/2025/123" />
+                <input type="text" id="caseNumberDowody" required placeholder="np. SG/O/2025/123" />
                 
                 <label>Imię i nazwisko osoby składającej dowód:</label>
                 <input type="text" id="zglaszajacyDowody" required placeholder="np. sierż. sztab. Marek Nowak" />
@@ -358,7 +358,7 @@
         <div id="kalendarz" class="tab">
             <form id="kalendarzForm">
                 <label>Numer sprawy:</label>
-                <input type="text" id="caseNumberKalendarz" required placeholder="np. WO/S/2025/123" />
+                <input type="text" id="caseNumberKalendarz" required placeholder="np. SG/O/2025/123" />
                 
                 <label>Sędzia:</label>
                 <input type="text" id="sedziaKalendarz" required placeholder="np. Sędzia Mateusz Królikowski" />
@@ -470,7 +470,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderCaseRegister();
             const rok = new Date().getFullYear().toString().substr(-2);
-            document.getElementById('caseNumberWniosek').value = `WO/S/${rok}/${lastCaseNumber+1}`;
+            document.getElementById('caseNumberWniosek').value = `SG/O/${rok}/${lastCaseNumber+1}`;
         });
 
         function generujNumerEwidencyjny(prefix) {
@@ -491,7 +491,7 @@
             try {
                 lastCaseNumber++;
                 let rokShort = new Date().getFullYear().toString().substr(-2);
-                const caseNumber = `WO/S/${rokShort}/${lastCaseNumber}`;
+                const caseNumber = `SG/O/${rokShort}/${lastCaseNumber}`;
                 document.getElementById('caseNumberWniosek').value = caseNumber;
 
                 const ukarany = document.getElementById('ukaranyWniosek').value.trim();
@@ -533,7 +533,7 @@
                 setStatus('statusWniosek', 'Wniosek został pomyślnie wysłany! Numer sprawy: ' + caseNumber, true);
                 e.target.reset();
                 const rokNew = new Date().getFullYear().toString().substr(-2);
-                document.getElementById('caseNumberWniosek').value = `WO/S/${rokNew}/${lastCaseNumber+1}`;
+                document.getElementById('caseNumberWniosek').value = `SG/O/${rokNew}/${lastCaseNumber+1}`;
 
             } catch(err) {
                 setStatus('statusWniosek', 'Błąd podczas wysyłania wniosku: ' + err.message, false);
